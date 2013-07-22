@@ -207,29 +207,6 @@ changeWindowCount limit cols index val
         where posIndex | 0 > index = nLen + index
                        | otherwise = index
 
-
-moveWindowFromFocusCol this stack 0   = this
-moveWindowFromFocusCol this stack val = this {
-    columnList =  moveToNext (columnList this) (columnIndexF this stack) val
-  }
-
-moveFromNext cols index val = moveToNext cols index (0-val)
-moveToNext []   _     _   = []
-moveToNext cols _     0   = cols
-moveToNext cols index val
-  | not $ avail cols   = moveToNext (reduceInvalidCols cols) index val
-  | (index - nLen) >= 0 = cols 
-  | (index + nLen) <  0 = cols
-  | index < 0 = moveToNext cols (nLen+index) val
-  | val   < 0 = reverse $ moveToNext (reverse cols) (0-(index+2)) (0-val)
-  | otherwise = moveToNext vCols' index (val-1)
-    where
-      avail  v = all    (> 0) v
-      nLen     = length cols 
-      vCols    = cols ++ [0]
-      vTarget' = zipWith (+) [(0-1),1] $ take 2 (drop index vCols)
-      vCols'   = reduceInvalidCols $ (take index vCols) ++ vTarget' ++ drop (index+2) vCols
-
 resizeFocused this stack deltaWidth deltaHeight = this {
     sizeList = zip vWidth' vvHeights'
   }
@@ -294,11 +271,7 @@ between from to val
   | from > to = between to from val
   | otherwise = max from $ min val to
 
-fst_r x = flip (,) (snd x)
 snd_r x = (,) (fst x)
-fst_a x = (fst_r x) . (+ fst x)
-snd_a x = (snd_r x) . (+ snd x)
-
 getCompl        n    = take n [ 1/x | x <- [1..] ]
 getCompled list n    = override list $ getCompl n
 override   list base = list ++ drop (length list) base

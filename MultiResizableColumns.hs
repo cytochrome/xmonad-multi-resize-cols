@@ -7,7 +7,7 @@ module XMonad.Layout.MultiResizableColumns (
                               -- $usage
                               multiResizableColumns,
                               MultiResizableColumns,
-                              ResizeWidth(..)
+                              ResizeMirror(..)
                              ) where
 
 import XMonad
@@ -15,9 +15,9 @@ import qualified XMonad.StackSet as W
 import Control.Monad
 import Data.List ((\\),mapAccumL)
 
-data ResizeWidth = ShrinkWidth | ExpandWidth deriving Typeable
+data ResizeMirror = ShrinkMirror | ExpandMirror deriving Typeable
 
-instance Message ResizeWidth
+instance Message ResizeMirror
 
 data MultiResizableColumns a = MultiResizableColumns
   { isChanged     :: !Bool
@@ -49,14 +49,14 @@ instance LayoutClass MultiResizableColumns a where
       where
         handleMessageM stack = msum [
           fmap (\x -> resize     x stack) (fromMessage msg)
-         ,fmap (\x -> mresize    x stack) (fromMessage msg)
+         ,fmap (\x -> resizeM    x stack) (fromMessage msg)
          ,fmap (\x -> incmastern x stack) (fromMessage msg)
          ]
         incmastern (IncMasterN x) s = setChanged $ addMasterWindowCount this s x
-        resize  Shrink      = doResize (-1) 0
-        resize  Expand      = doResize ( 1) 0
-        mresize ShrinkWidth = doResize 0    (-1)
-        mresize ExpandWidth = doResize 0    ( 1)
+        resize Shrink        = doResize (-1) 0
+        resize Expand        = doResize ( 1) 0
+        resizeM ShrinkMirror = doResize 0    (-1)
+        resizeM ExpandMirror = doResize 0    ( 1)
         setChanged obj   = obj { isChanged = True }
         doResize x y s = setChanged $ resizeFocused this s w h
             where (w,h) = let delta = (sizeUnit this) in (delta*x,delta*y)

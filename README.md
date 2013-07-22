@@ -2,12 +2,11 @@ MultiResizableColumns
 ========================
 
 
-
-MultiResizableColumns is Layout Module of XMonad.which has features of MultiColumns and ResizableTiles.
-
+MultiResizableColumns, which has features of MultiColumns and ResizableTiles, is Layout Module for XMonad. 
 
 
-heres my configuration-file (-xmonad.hs-) as Usage/Examples
+
+Here's my configuration-file (-xmonad.hs-) (as Usage/Examples :p)
 
 ---
 
